@@ -8,6 +8,8 @@ namespace csharp
         private const string BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
         private const string SULFURAS = "Sulfuras, Hand of Ragnaros";
         private const string CONJURED_MANA_CAKE = "Conjured Mana Cake";
+        private const int BACKSTAGE_PASS_THRESHOLD_1 = 10;
+        private const int BACKSTAGE_PASS_THRESHOLD_2 = 5;
         private const int MINIMUM_QUALITY = 0;
         private const int MAXIMUM_QUALITY = 50;
         IList<Item> Items;
@@ -93,8 +95,8 @@ namespace csharp
         private static void UpdateItemQualityForBackstagePass(Item CurrentItem)
         {
             IncreaseQuality(CurrentItem);
-            IncreaseAdditionalQualityIfSellInIsBelowTen(CurrentItem);
-            IncreaseAdditionalQualityIfSellInIsBelowFive(CurrentItem);
+            IncreaseAdditionalQualityIfSellInIsBelowThresholdValue(CurrentItem, BACKSTAGE_PASS_THRESHOLD_1);
+            IncreaseAdditionalQualityIfSellInIsBelowThresholdValue(CurrentItem, BACKSTAGE_PASS_THRESHOLD_2);
             SetQualityToZeroIfSellInIsBelowZero(CurrentItem);
         }
 
@@ -137,9 +139,9 @@ namespace csharp
             }
         }
 
-        private static void IncreaseAdditionalQualityIfSellInIsBelowTen(Item CurrentItem)
+        private static void IncreaseAdditionalQualityIfSellInIsBelowThresholdValue(Item CurrentItem, int ThresholdValue)
         {
-            if (CurrentItem.SellIn < 10)
+            if (CurrentItem.SellIn < ThresholdValue)
             {
                 if (CurrentItem.Quality < MAXIMUM_QUALITY)
                 {
@@ -148,16 +150,6 @@ namespace csharp
             }
         }
 
-        private static void IncreaseAdditionalQualityIfSellInIsBelowFive(Item CurrentItem)
-        {
-            if (CurrentItem.SellIn < 5)
-            {
-                if (CurrentItem.Quality < MAXIMUM_QUALITY)
-                {
-                    CurrentItem.Quality += 1;
-                }
-            }
-        }
         private static void SetQualityToZeroIfSellInIsBelowZero(Item CurrentItem)
         {
             if (CurrentItem.SellIn < 0)
