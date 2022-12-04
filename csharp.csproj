@@ -97,7 +97,11 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CurrentTestResults.txt" />
+    <Content Include="CurrentTestResultsBackstagePasses.txt" />
+    <Content Include="CurrentTestResultsSulfuras.txt" />
+    <Content Include="CurrentTestResultsConjuredManaCake.txt" />
+    <Content Include="CurrentTestResultsOtherItems.txt" />
+    <Content Include="CurrentTestResultsAgedBrie.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
