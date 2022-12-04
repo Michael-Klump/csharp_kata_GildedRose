@@ -1,7 +1,7 @@
 ﻿Conjured Mana Cake,2,10
 Conjured Mana Cake,1,8
 Conjured Mana Cake,0,6
-Conjured Mana Cake,-1,2
+Conjured Mana Cake,-1,0
 Conjured Mana Cake,-2,0
 Conjured Mana Cake,-3,0
 Conjured Mana Cake,-4,0

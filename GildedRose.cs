@@ -8,6 +8,8 @@ namespace csharp
         private const string BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
         private const string SULFURAS = "Sulfuras, Hand of Ragnaros";
         private const string CONJURED_MANA_CAKE = "Conjured Mana Cake";
+        private const int MINIMUM_QUALITY = 0;
+        private const int MAXIMUM_QUALITY = 50;
         IList<Item> Items;
         public GildedRose(IList<Item> Items)
         {
@@ -18,90 +20,42 @@ namespace csharp
         {
             foreach (Item CurrentItem in Items)
             {
-                if (!IsAgedBrie(CurrentItem) && !IsBackstagePass(CurrentItem))
+                DecreaseSellIn(CurrentItem);
+
+                if (IsOtherItem(CurrentItem))
                 {
-                    if (CurrentItem.Quality > 0)
-                    {
-                        if (!IsSulfuras(CurrentItem))
-                        {
-                            if (!IsConjuredManaCake(CurrentItem))
-                            {
-                                CurrentItem.Quality-=1;
-                            }
-                            else
-                            {
-                                CurrentItem.Quality-=2;
-                            }
-                        }
-                    }
+                    UpdateItemQualityForOtherItem(CurrentItem);
                 }
                 else
                 {
-                    if (CurrentItem.Quality < 50)
+                    if (IsAgedBrie(CurrentItem))
                     {
-                        CurrentItem.Quality+=1;
-
-                        if (IsBackstagePass(CurrentItem))
-                        {
-                            if (CurrentItem.SellIn < 11)
-                            {
-                                if (CurrentItem.Quality < 50)
-                                {
-                                    CurrentItem.Quality+=1;
-                                }
-                            }
-
-                            if (CurrentItem.SellIn < 6)
-                            {
-                                if (CurrentItem.Quality < 50)
-                                {
-                                    CurrentItem.Quality += 1;
-                                }
-                            }
-                        }
+                        UpdateItemQualityForAgedBrie(CurrentItem);
                     }
-                }
-
-                if (!IsSulfuras(CurrentItem))
-                {
-                    CurrentItem.SellIn-=1;
-                }
-
-                if (CurrentItem.SellIn < 0)
-                {
-                    if (!IsAgedBrie(CurrentItem))
+                    else if (IsBackstagePass(CurrentItem))
                     {
-                        if (!IsBackstagePass(CurrentItem))
-                        {
-                            if (CurrentItem.Quality > 0)
-                            {
-                                if (!IsSulfuras(CurrentItem))
-                                {
-                                    if (!IsConjuredManaCake(CurrentItem))
-                                    {
-                                        CurrentItem.Quality-=1;
-                                    }
-                                    else
-                                    {
-                                        CurrentItem.Quality-=2;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            CurrentItem.Quality-=CurrentItem.Quality;
-                        }
+                        UpdateItemQualityForBackstagePass(CurrentItem);
                     }
-                    else
+                    else if (IsConjuredManaCake(CurrentItem))
                     {
-                        if (CurrentItem.Quality < 50)
-                        {
-                            CurrentItem.Quality+=1;
-                        }
+                        UpdateItemQualityForConjuredManaCake(CurrentItem);
                     }
                 }
             }
+        }
+
+        private static void DecreaseSellIn(Item CurrentItem)
+        {
+            if (!IsSulfuras(CurrentItem))
+            {
+                CurrentItem.SellIn -= 1;
+            }
+        }
+
+        private bool IsOtherItem(Item ItemToBeChecked)
+        {
+            return (!IsAgedBrie(ItemToBeChecked) && !IsBackstagePass(ItemToBeChecked) &&
+                !IsConjuredManaCake(ItemToBeChecked) && !IsSulfuras(ItemToBeChecked));
         }
 
         private bool IsAgedBrie(Item ItemToBeChecked)
@@ -109,19 +63,107 @@ namespace csharp
             return ItemToBeChecked.Name.Equals(AGED_BRIE);
         }
 
-        private static bool IsConjuredManaCake(Item CurrentItem)
-        {
-            return CurrentItem.Name.Equals(CONJURED_MANA_CAKE);
-        }
-
         private static bool IsBackstagePass(Item CurrentItem)
         {
             return CurrentItem.Name.Equals(BACKSTAGE_PASS);
         }
 
+        private static bool IsConjuredManaCake(Item CurrentItem)
+        {
+            return CurrentItem.Name.Equals(CONJURED_MANA_CAKE);
+        }
+
         private static bool IsSulfuras(Item CurrentItem)
         {
             return CurrentItem.Name.Equals(SULFURAS);
+        }
+
+        private static void UpdateItemQualityForOtherItem(Item CurrentItem)
+        {
+            DecreaseQuality(CurrentItem);
+            DecreaseAdditionalQualityAfterSellInIsBelowZero(CurrentItem);
+        }
+
+        private static void UpdateItemQualityForAgedBrie(Item CurrentItem)
+        {
+            IncreaseQuality(CurrentItem);
+            IncreaseAdditionalQualityAfterSellInIsBelowZero(CurrentItem);
+        }
+
+        private static void UpdateItemQualityForBackstagePass(Item CurrentItem)
+        {
+            IncreaseQuality(CurrentItem);
+            IncreaseAdditionalQualityIfSellInIsBelowTen(CurrentItem);
+            IncreaseAdditionalQualityIfSellInIsBelowFive(CurrentItem);
+            SetQualityToZeroIfSellInIsBelowZero(CurrentItem);
+        }
+
+        private static void UpdateItemQualityForConjuredManaCake(Item CurrentItem)
+        {
+            DecreaseQuality(CurrentItem);
+            DecreaseQuality(CurrentItem);
+            SetQualityToZeroIfSellInIsBelowZero(CurrentItem);
+        }
+
+        private static void DecreaseQuality(Item CurrentItem)
+        {
+            if (CurrentItem.Quality > MINIMUM_QUALITY)
+            {
+                CurrentItem.Quality -= 1;
+            }
+        }
+
+        private static void DecreaseAdditionalQualityAfterSellInIsBelowZero(Item CurrentItem)
+        {
+            if (CurrentItem.SellIn < 0 && CurrentItem.Quality > MINIMUM_QUALITY)
+            {
+                CurrentItem.Quality -= 1;
+            }
+        }
+
+        private static void IncreaseQuality(Item CurrentItem)
+        {
+            if (CurrentItem.Quality < MAXIMUM_QUALITY)
+            {
+                CurrentItem.Quality += 1;
+            }
+        }
+
+        private static void IncreaseAdditionalQualityAfterSellInIsBelowZero(Item CurrentItem)
+        {
+            if (CurrentItem.SellIn < 0 && CurrentItem.Quality < MAXIMUM_QUALITY)
+            {
+                CurrentItem.Quality += 1;
+            }
+        }
+
+        private static void IncreaseAdditionalQualityIfSellInIsBelowTen(Item CurrentItem)
+        {
+            if (CurrentItem.SellIn < 10)
+            {
+                if (CurrentItem.Quality < MAXIMUM_QUALITY)
+                {
+                    CurrentItem.Quality += 1;
+                }
+            }
+        }
+
+        private static void IncreaseAdditionalQualityIfSellInIsBelowFive(Item CurrentItem)
+        {
+            if (CurrentItem.SellIn < 5)
+            {
+                if (CurrentItem.Quality < MAXIMUM_QUALITY)
+                {
+                    CurrentItem.Quality += 1;
+                }
+            }
+        }
+        private static void SetQualityToZeroIfSellInIsBelowZero(Item CurrentItem)
+        {
+            if (CurrentItem.SellIn < 0)
+            {
+                CurrentItem.Quality -= CurrentItem.Quality;
+            }
         }
     }
 }
