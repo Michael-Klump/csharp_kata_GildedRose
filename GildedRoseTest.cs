@@ -16,6 +16,7 @@ namespace csharp
                 new Item { Name = "Aged Brie", SellIn = 2, Quality = 0 },
                 new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 15, Quality = 20 },
                 new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80 },
+                new Item { Name = "Conjured Mana Cake", SellIn = 3, Quality = 12 },
                 new Item { Name = "Other Items", SellIn = 10, Quality = 20 }
             };
 
@@ -39,6 +40,7 @@ namespace csharp
                 new Item { Name = "Aged Brie", SellIn = 2, Quality = 0 },
                 new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 15, Quality = 20 },
                 new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80 },
+                new Item { Name = "Conjured Mana Cake", SellIn = 3, Quality = 12 },
                 new Item { Name = "Other Items", SellIn = 10, Quality = 20 }
             };
 
@@ -57,41 +59,6 @@ namespace csharp
                     CurrentTestResultLineCounter++;
                 }
             }
-        }
-
-        [Test]
-        public void ConjuredItemUpdateQualityTest()
-        {
-            IList<Item> Items = new List<Item> {
-                new Item { Name = "Conjured Mana Cake", SellIn = 3, Quality = 12 },
-            };
-
-            GildedRose app = new GildedRose(Items);
-
-            //after 1 day
-            app.UpdateQuality();
-            Assert.AreEqual(2, Items[0].SellIn);
-            Assert.AreEqual(10, Items[0].Quality);
-
-            //after 2 days
-            app.UpdateQuality();
-            Assert.AreEqual(1, Items[0].SellIn);
-            Assert.AreEqual(8, Items[0].Quality);
-
-            //after 3 days
-            app.UpdateQuality();
-            Assert.AreEqual(0, Items[0].SellIn);
-            Assert.AreEqual(6, Items[0].Quality);
-
-            //after 4 days
-            app.UpdateQuality();
-            Assert.AreEqual(-1, Items[0].SellIn);
-            Assert.AreEqual(2, Items[0].Quality);
-
-            //after 5 days
-            app.UpdateQuality();
-            Assert.AreEqual(-2, Items[0].SellIn);
-            Assert.AreEqual(0, Items[0].Quality);
         }
     }
 }
