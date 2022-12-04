@@ -4,6 +4,10 @@ namespace csharp
 {
     public class GildedRose
     {
+        private const string AGED_BRIE = "Aged Brie";
+        private const string BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
+        private const string SULFURAS = "Sulfuras, Hand of Ragnaros";
+        private const string CONJURED_MANA_CAKE = "Conjured Mana Cake";
         IList<Item> Items;
         public GildedRose(IList<Item> Items)
         {
@@ -12,92 +16,112 @@ namespace csharp
 
         public void UpdateQuality()
         {
-            for (var i = 0; i < Items.Count; i++)
+            foreach (Item CurrentItem in Items)
             {
-                if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
+                if (!IsAgedBrie(CurrentItem) && !IsBackstagePass(CurrentItem))
                 {
-                    if (Items[i].Quality > 0)
+                    if (CurrentItem.Quality > 0)
                     {
-                        if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
+                        if (!IsSulfuras(CurrentItem))
                         {
-                            if (Items[i].Name != "Conjured Mana Cake")
+                            if (!IsConjuredManaCake(CurrentItem))
                             {
-                                Items[i].Quality = Items[i].Quality - 1;
+                                CurrentItem.Quality-=1;
                             }
                             else
                             {
-                                Items[i].Quality = Items[i].Quality - 2;
+                                CurrentItem.Quality-=2;
                             }
                         }
                     }
                 }
                 else
                 {
-                    if (Items[i].Quality < 50)
+                    if (CurrentItem.Quality < 50)
                     {
-                        Items[i].Quality = Items[i].Quality + 1;
+                        CurrentItem.Quality+=1;
 
-                        if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
+                        if (IsBackstagePass(CurrentItem))
                         {
-                            if (Items[i].SellIn < 11)
+                            if (CurrentItem.SellIn < 11)
                             {
-                                if (Items[i].Quality < 50)
+                                if (CurrentItem.Quality < 50)
                                 {
-                                    Items[i].Quality = Items[i].Quality + 1;
+                                    CurrentItem.Quality+=1;
                                 }
                             }
 
-                            if (Items[i].SellIn < 6)
+                            if (CurrentItem.SellIn < 6)
                             {
-                                if (Items[i].Quality < 50)
+                                if (CurrentItem.Quality < 50)
                                 {
-                                    Items[i].Quality = Items[i].Quality + 1;
+                                    CurrentItem.Quality += 1;
                                 }
                             }
                         }
                     }
                 }
 
-                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
+                if (!IsSulfuras(CurrentItem))
                 {
-                    Items[i].SellIn = Items[i].SellIn - 1;
+                    CurrentItem.SellIn-=1;
                 }
 
-                if (Items[i].SellIn < 0)
+                if (CurrentItem.SellIn < 0)
                 {
-                    if (Items[i].Name != "Aged Brie")
+                    if (!IsAgedBrie(CurrentItem))
                     {
-                        if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
+                        if (!IsBackstagePass(CurrentItem))
                         {
-                            if (Items[i].Quality > 0)
+                            if (CurrentItem.Quality > 0)
                             {
-                                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
+                                if (!IsSulfuras(CurrentItem))
                                 {
-                                    if (Items[i].Name != "Conjured Mana Cake")
+                                    if (!IsConjuredManaCake(CurrentItem))
                                     {
-                                        Items[i].Quality = Items[i].Quality - 1;
+                                        CurrentItem.Quality-=1;
                                     }
                                     else
                                     {
-                                        Items[i].Quality = Items[i].Quality - 2;
+                                        CurrentItem.Quality-=2;
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
+                            CurrentItem.Quality-=CurrentItem.Quality;
                         }
                     }
                     else
                     {
-                        if (Items[i].Quality < 50)
+                        if (CurrentItem.Quality < 50)
                         {
-                            Items[i].Quality = Items[i].Quality + 1;
+                            CurrentItem.Quality+=1;
                         }
                     }
                 }
             }
+        }
+
+        private bool IsAgedBrie(Item ItemToBeChecked)
+        {
+            return ItemToBeChecked.Name.Equals(AGED_BRIE);
+        }
+
+        private static bool IsConjuredManaCake(Item CurrentItem)
+        {
+            return CurrentItem.Name.Equals(CONJURED_MANA_CAKE);
+        }
+
+        private static bool IsBackstagePass(Item CurrentItem)
+        {
+            return CurrentItem.Name.Equals(BACKSTAGE_PASS);
+        }
+
+        private static bool IsSulfuras(Item CurrentItem)
+        {
+            return CurrentItem.Name.Equals(SULFURAS);
         }
     }
 }
